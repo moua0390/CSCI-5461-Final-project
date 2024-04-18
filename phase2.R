@@ -2,7 +2,7 @@
 
 library(class)
 
-supervised_snc_classifier <- function(train, test, k) {
+supervised_snc_classifier <- function(train, test, k=5) {
   # Retrieve SnC scores from training data
   train_scores <- train$score
   
