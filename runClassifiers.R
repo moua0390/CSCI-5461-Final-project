@@ -1,12 +1,14 @@
 source("phase1.R")
 source("phase2.R")
-library(data.table)
+
+install.packages("vroom")
+library(vroom)
 
 setDTthreads(threads=0)
 
 # Read data
-integrated_df <- fread("./Integrated_scaled_counts_release.txt", verbose=TRUE)
-heldout_df <- fread("./Phase2_masked_holdout_10k_integrated_scaled_counts.txt", verbose=TRUE)
+integrated_df <- vroom("./Integrated_scaled_counts_release.txt")
+heldout_df <- vroom("./Phase2_masked_holdout_10k_integrated_scaled_counts.txt")
 
 unsupervised_scores <- unsupervised_snc_classifier(integrated_df)
 supervised_scores <- supervised_snc_classifier(unsupervised_scores, heldout_df)
