@@ -1,11 +1,13 @@
-# Phase 2 — Supervised learning classifier
+# Supervised learning classifier — K-Nearest Neighbors
 
 library(class)
+
+set.seed(54612024)
 
 supervised_snc_classifier <- function(train, test, k=5) {
   # Retrieve SnC scores from training data
   train_scores <- train$score
-  
+
   # Remove non-numeric columns
   train_filtered <- Filter(is.numeric, train[, colnames(train)[colnames(train) != "score"]])
   test_filtered <- Filter(is.numeric, test)
