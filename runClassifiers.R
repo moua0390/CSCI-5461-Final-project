@@ -4,13 +4,12 @@ source("phase2.R")
 install.packages("vroom")
 library(vroom)
 
-setDTthreads(threads=0)
-
 # Read data
 integrated_df <- vroom("./Integrated_scaled_counts_release.txt")
+meta_df <- vroom("./Metadata_release.txt")
 heldout_df <- vroom("./Phase2_masked_holdout_10k_integrated_scaled_counts.txt")
 
-unsupervised_scores <- unsupervised_snc_classifier(integrated_df)
+unsupervised_scores <- unsupervised_snc_classifier(integrated_df, meta_df$cell_ID)
 supervised_scores <- supervised_snc_classifier(unsupervised_scores, heldout_df)
 
 # Save scores to text files

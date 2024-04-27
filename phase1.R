@@ -1,21 +1,21 @@
 # Unsupervised learning classifier — K-Means clustering
 
+# Remember that in addition to these gene lists, we expect
+# the SnC population to be more abundant (~ 5-20X or more abundant)
+# in the samples derived from old mice relative to the young mice,
+# which should also be incorporated into your scoring criteria.
+
 install.packages("useful")
 library(useful)
 
 set.seed(54612024)
 
-unsupervised_snc_classifier <- function(count_df) {
-  #count_df <- read.csv("Integrated_scaled_counts_release.txt", header=TRUE) 
-
-  num_clusters = 30
-
-  kmeans_result <- kmeans(count_df[-1, -1], num_clusters)
+unsupervised_snc_classifier <- function(count_df, cell_ids, k=30) {
+  # Criteria based on Study 1
+  high_genes <- c("Cdkn2a", "E2f2", "Tnf", "Lmnb1", "Il10", "Il1b", "Bst1", "Irg1", "Parp14", "Itgax", "Itgam")
+  low_genes <- c("Sulf2", "Angptl2", "Sirt4", "Sirt3", "Nnmt", "Sirt5", "Bcl2l2", "Nmnat1", "Nampt", "Parp6", "Igfbp2", "Parp3")
+  
+  kmeans_result <- kmeans(count_df[-1,-1], k)
   plot(kmeans_result)
   print(kmeans_result)
-
-  # Append scores to the data set
-  scored_df <- cbind(count_df, kmeans_result)
-  
-  return (scored_df)
 }
