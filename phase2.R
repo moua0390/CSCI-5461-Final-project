@@ -4,19 +4,17 @@ library(class)
 
 set.seed(54612024)
 
-supervised_snc_classifier <- function(train, test, k=5, output_file="phase2_predictions.txt") {
-  # Retrieve SnC scores from training data
-  #train_scores <- rowMeans(train[,-1])
-
-  # Remove non-numeric columns
-  train_filtered <- Filter(is.numeric, train)
-  test_filtered <- Filter(is.numeric, test)
+supervised_snc_classifier <- function(train, train_scores, test, k=30, output_file="phase2_predictions.txt") {
+  # Transpose data in order to cluster by cell
+  train_transpose <- t(train[,-1])
+  test_transpose <- t(test[,-1])
 
   # Perform K-Nearest Neighbors classification
-  score <- knn(train_filtered, test_filtered, train_scores, k)
+  score <- knn(train_transpose, test_transpose, train_scores, k)
 
-  # Append test scores to the test data set
-  test_scored <- cbind(test, score)
+  # Record test scores for each cell
+  test_scored <- t(data.frame(score, row.names=rownames(test_transpose)))
+  write.csv(test_scored, output_file, row.names=FALSE, quote=FALSE)
 
   return (test_scored)
 }

@@ -9,5 +9,8 @@ integrated_df <- vroom("./Integrated_scaled_counts_release.txt")
 meta_df <- vroom("./Metadata_release.txt")
 heldout_df <- vroom("./Phase2_masked_holdout_10k_integrated_scaled_counts.txt")
 
+# Perform unsupervised clustering
 unsupervised_scores <- unsupervised_snc_classifier(integrated_df, meta_df$cell_ID)
-supervised_scores <- supervised_snc_classifier(integrated_df[,unsupervised_scores], heldout_df)
+
+# Use unsupervised scores to perform supervised clustering
+supervised_scores <- supervised_snc_classifier(integrated_df, unsupervised_scores$score, heldout_df)

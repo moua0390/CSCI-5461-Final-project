@@ -16,10 +16,7 @@ library(useful)
 
 set.seed(54612024)
 
-unsupervised_snc_classifier <- function(count_df, cell_ids, output_file="phase1_predictions.txt") {
-  k = 30
-  #k = ceiling(sqrt(nrow(count_df)) / 2)
-  
+unsupervised_snc_classifier <- function(count_df, cell_ids, k=30, output_file="phase1_predictions.txt") {
   # Perform clustering
   kmeans_result <- kmeans(count_df[,-1], k)
   plot(kmeans_result)
@@ -91,7 +88,7 @@ unsupervised_snc_classifier <- function(count_df, cell_ids, output_file="phase1_
   snc_clusters <- which(cluster_scores == max(cluster_scores))
   
   # Record likelihood scores
-  scores_df <- data.frame(cell_ids)
+  scores_df <- data.frame(cell_ID=cell_ids)
   for (i in 1:length(snc_clusters)) {
     # Retrieve the center in the current cluster
     distances <- kmeans_result$centers[snc_clusters[i],]
@@ -103,11 +100,14 @@ unsupervised_snc_classifier <- function(count_df, cell_ids, output_file="phase1_
   }
   
   # Retrieve cells with an average high likelihood (>95%)
-  snc_cells <- scores_df[rowMeans(scores_df[,-1]) > 0.95,]$cell_ids
+  # snc_cells_df <- scores_df[rowMeans(scores_df[,-1]) > 0.95,]
+  # snc_cells_df <- data.frame(cell_ID=snc_cells_df$cell_ids, score=rowMeans(snc_cells_df[,-1]))
+  snc_cells <- scores_df[rowMeans(scores_df[,-1]) > 0.95,]$cell_ID
   
   # Record cells with high likelihood to text file
-  write.csv(data.frame(cell_ids=snc_cells), output_file, row.names=FALSE, quote=FALSE)
+  write.csv(data.frame(cell_ID=snc_cells), output_file, row.names=FALSE, quote=FALSE)
   
-  # Return putative Senescent cell population
-  return (snc_cells)
+  # Return putative Senescent cell population with scores
+  scores_mean_df <- data.frame(cell_ID=scores_df$cell_ID, score=rowMeans(scores_df[,-1]))
+  return (scores_mean_df)
 }
