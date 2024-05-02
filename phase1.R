@@ -1,5 +1,10 @@
 # Unsupervised learning classifier — K-Means clustering
 
+if (!require("ggfortify")) {
+  install.packages("ggfortify")
+  library(ggfortify)
+}
+
 if (!require("scales")) {
   install.packages("scales")
   library(scales)
@@ -10,18 +15,17 @@ if (!require("stringr")) {
   library(stringr)
 }
 
-if (!require("useful")) {
-  install.packages("useful")
-  library(useful)
-}
-
 set.seed(54612024)
 
 unsupervised_snc_classifier <- function(count_df, wechter_df, senmayo_df, cell_ids, k=30, output_file="phase1_predictions.txt") {
   # Perform clustering
   kmeans_result <- kmeans(count_df[,-1], k)
-  plot(kmeans_result)
-  # print(kmeans_result)
+  
+  # The following code creates a cluster plot.
+  # Commented out to reduce runtime.
+  # autoplot(kmeans_result, data=count_df[,-1], scale.=FALSE, frame.type="norm") +
+  #   ggtitle(paste("2D PCA plot from K-Means with", k, "clusters")) +
+  #   theme(plot.title=element_text(hjust = 0.5))
   
   # Age criteria
   old_cells <- cell_ids[str_detect(cell_ids, "1_1|1_2|1_3")]
