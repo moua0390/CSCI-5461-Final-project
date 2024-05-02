@@ -5,7 +5,6 @@
 # in the samples derived from old mice relative to the young mice,
 # which should also be incorporated into your scoring criteria.
 
-
 install.packages("scales")
 install.packages("stringr")
 install.packages("useful")
@@ -16,11 +15,11 @@ library(useful)
 
 set.seed(54612024)
 
-unsupervised_snc_classifier <- function(count_df, cell_ids, k=30, output_file="phase1_predictions.txt") {
+unsupervised_snc_classifier <- function(count_df, wechter_df, senmayo_df, cell_ids, k=30, output_file="phase1_predictions.txt") {
   # Perform clustering
   kmeans_result <- kmeans(count_df[,-1], k)
   plot(kmeans_result)
-  #print(kmeans_result)
+  # print(kmeans_result)
   
   # Age criteria
   cell_ids <- meta_df$cell_ID
@@ -31,13 +30,15 @@ unsupervised_snc_classifier <- function(count_df, cell_ids, k=30, output_file="p
   high_genes <- c("Cdkn2a", "E2f2", "Tnf", "Lmnb1", "Il10", "Il1b", "Bst1", "Irg1", "Parp14", "Itgax", "Itgam")
   low_genes <- c("Sulf2", "Angptl2", "Sirt4", "Sirt3", "Nnmt", "Sirt5", "Bcl2l2", "Nmnat1", "Nampt", "Parp6", "Igfbp2", "Parp3")
 
-  # TODO: Criteria based on Study 2
-  # Looking for...
+  # Criteria based on Study 2
+  wechter_genes <- wechter_df[wechter_df$direction == "UP",]
+  wechter_genes <- wechter_genes$gene
 
-  # TODO: Criteria based on Study 3
-  # Looking for Secreted state and...
+  # Criteria based on Study 3
+  senmayo_genes <- senmayo_df[senmayo_df$Classification == "Intercellular signal molecule" & senmayo_df$State == "Secreted", ]
+  senmayo_genes <- senmayo_genes$`Gene(murine)`
   
-  # TODO: Score the resulting clusters
+  # Score the resulting clusters
   cluster_scores <- sapply(1:k, function(nclust) {
     score <- 0
     
@@ -45,10 +46,15 @@ unsupervised_snc_classifier <- function(count_df, cell_ids, k=30, output_file="p
     node_indexes <- which(kmeans_result$cluster == nclust)
     node_counts <- count_df[node_indexes,]
     
-    # Check if any of the genes are the high abundance genes (Criteria 1)
+    # Check for genes that match each data set
     count_high_genes <- node_counts[node_counts$...1 %in% high_genes,]
+    count_wechter_genes <- node_counts[node_counts$...1 %in% wechter_genes,]
+    count_senmayo_genes <- node_counts[node_counts$...1 %in% senmayo_genes,]
+    
     # Increment count for each match
     score <- score + nrow(count_high_genes)
+    score <- score + nrow(count_wechter_genes)
+    score <- score + nrow(count_senmayo_genes)
     
     # Increment score if average number of high abundance genes in old cells
     # is greater than in young cells
@@ -78,6 +84,26 @@ unsupervised_snc_classifier <- function(count_df, cell_ids, k=30, output_file="p
     }
     else {
       score <- score + 1
+    }
+    
+    if(nrow(count_wechter_genes) > 0) {
+      wechter_genes_in_old <- count_wechter_genes[, old_cells]
+      wecther_genes_in_young <- count_wechter_genes[, old_cells]
+      
+      wechter_genes_in_old_avg <- rowMeans(wechter_genes_in_old)
+      wechter_genes_in_young_avg <- rowMeans(wechter_genes_in_young)
+      
+      score <- score + sum(wechter_genes_in_old_avg > wechter_genes_in_young_avg) 
+    }
+    
+    if(nrow(count_senmayo_genes) > 0) {
+      senmayo_genes_in_old <- count_senmayo_genes[, old_cells]
+      senmayo_genes_in_young <- count_senmayo_genes[, young_cells]
+      
+      senmayo_genes_in_old_avg <- rowMeans(senmayo_genes_in_old)
+      senmayo_genes_in_young_avg <- rowMeans(senmayo_genes_in_young)
+      
+      score <- score + sum(senmayo_genes_in_old_avg > senmayo_genes_in_young_avg)
     }
     
     # Final score
