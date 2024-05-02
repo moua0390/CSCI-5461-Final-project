@@ -1,10 +1,13 @@
 # Supervised learning classifier — K-Nearest Neighbors
 
-library(class)
+if (!require("class")) {
+  install.packages("class")
+  library(class)
+}
 
 set.seed(54612024)
 
-supervised_snc_classifier <- function(train, train_scores, test, k=30, output_file="phase2_predictions.txt") {
+supervised_snc_classifier <- function(train, test, train_scores, k=5, output_file="phase2_predictions.txt") {
   # Transpose data in order to cluster by cell
   train_transpose <- t(train[,-1])
   test_transpose <- t(test[,-1])

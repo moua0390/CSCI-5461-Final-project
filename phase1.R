@@ -1,17 +1,19 @@
 # Unsupervised learning classifier — K-Means clustering
 
-# Remember that in addition to these gene lists, we expect
-# the SnC population to be more abundant (~ 5-20X or more abundant)
-# in the samples derived from old mice relative to the young mice,
-# which should also be incorporated into your scoring criteria.
+if (!require("scales")) {
+  install.packages("scales")
+  library(scales)
+}
 
-install.packages("scales")
-install.packages("stringr")
-install.packages("useful")
+if (!require("stringr")) {
+  install.packages("stringr")
+  library(stringr)
+}
 
-library(scales)
-library(stringr)
-library(useful)
+if (!require("useful")) {
+  install.packages("useful")
+  library(useful)
+}
 
 set.seed(54612024)
 
@@ -22,7 +24,6 @@ unsupervised_snc_classifier <- function(count_df, wechter_df, senmayo_df, cell_i
   # print(kmeans_result)
   
   # Age criteria
-  cell_ids <- meta_df$cell_ID
   old_cells <- cell_ids[str_detect(cell_ids, "1_1|1_2|1_3")]
   young_cells <- cell_ids[str_detect(cell_ids, "1_4|1_5|1_6")]
   
@@ -126,14 +127,14 @@ unsupervised_snc_classifier <- function(count_df, wechter_df, senmayo_df, cell_i
   }
   
   # Retrieve cells with an average high likelihood (>95%)
-  # snc_cells_df <- scores_df[rowMeans(scores_df[,-1]) > 0.95,]
-  # snc_cells_df <- data.frame(cell_ID=snc_cells_df$cell_ids, score=rowMeans(snc_cells_df[,-1]))
   snc_cells <- scores_df[rowMeans(scores_df[,-1]) > 0.95,]$cell_ID
   
   # Record cells with high likelihood to text file
   write.csv(data.frame(cell_ID=snc_cells), output_file, row.names=FALSE, quote=FALSE)
   
-  # Return putative Senescent cell population with scores
-  scores_mean_df <- data.frame(cell_ID=scores_df$cell_ID, score=rowMeans(scores_df[,-1]))
-  return (scores_mean_df)
+  # Retrieve genes in SnC clusters for feature selection
+  snc_genes <- count_df[kmeans_result$cluster %in% snc_clusters, ][["...1"]]
+  
+  # Return SnC genes and scores
+  return(list(snc_genes, rowMeans(scores_df[,-1])))
 }
