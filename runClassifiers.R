@@ -1,7 +1,4 @@
-# Runs unsupervised and supervised classifiers on provided SnC data
-
-source("phase1.R")
-source("phase2.R")
+## Runs unsupervised and supervised classifiers on provided SnC data
 
 if (!require("ggfortify")) {
   install.packages("ggfortify")
@@ -12,6 +9,11 @@ if (!require("vroom")) {
   install.packages("vroom")
   library(vroom)
 }
+
+set.seed(54612024)
+
+source("phase1.R")
+source("phase2.R")
 
 
 ## Read in SnC data

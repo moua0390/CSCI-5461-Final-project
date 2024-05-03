@@ -1,4 +1,4 @@
-# Supervised learning classifier — K-Nearest Neighbors
+## Supervised learning classifier — K-Nearest Neighbors
 
 if (!require("class")) {
   install.packages("class")
