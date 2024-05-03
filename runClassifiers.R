@@ -30,7 +30,7 @@ unsupervised_scores <- unsupervised_snc_classifier(integrated_df, wechter_df, se
 
 # Retrieve expression profiles of SnC genes (unsupervised results) only
 train <- integrated_df[integrated_df$...1 %in% unsupervised_scores[[1]],]
-test <- heldout_df[heldout_df$...1 %in% unlist(unsupervised_scores[[1]]),]
+test <- heldout_df[heldout_df$...1 %in% unsupervised_scores[[1]],]
 train_scores <- unsupervised_scores[[2]]
 supervised_scores <- supervised_snc_classifier(train, test, train_scores)
 
