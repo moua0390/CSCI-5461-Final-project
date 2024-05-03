@@ -18,6 +18,12 @@ supervised_snc_classifier <- function(train, test, train_scores, k=5, output_fil
   # Record test scores for each cell
   test_scored <- t(data.frame(score, row.names=rownames(test_transpose)))
   write.csv(test_scored, output_file, row.names=FALSE, quote=FALSE)
-
+  
+  # Evaluate performance using cross validation on the test set.
+  # Then compare test scores to cross validation scores.
+  cv_score <- knn.cv(test_transpose, score, k)
+  accuracy <- mean(cv_score == score)
+  cat("Supervised Model Accuracy (k=", k, "): ", accuracy, sep="")
+  
   return (test_scored)
 }

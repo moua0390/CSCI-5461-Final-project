@@ -25,7 +25,7 @@ unsupervised_snc_classifier <- function(count_df, wechter_df, senmayo_df, cell_i
   # Commented out to reduce runtime.
   # autoplot(kmeans_result, data=count_df[,-1], scale.=FALSE, frame.type="norm") +
   #   ggtitle(paste("2D PCA plot from K-Means with", k, "clusters")) +
-  #   theme(plot.title=element_text(hjust = 0.5))
+  #   theme(plot.title=element_text(hjust=0.5))
   
   # Age criteria
   old_cells <- cell_ids[str_detect(cell_ids, "1_1|1_2|1_3")]

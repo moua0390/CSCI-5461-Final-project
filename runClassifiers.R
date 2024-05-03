@@ -3,14 +3,14 @@
 source("phase1.R")
 source("phase2.R")
 
-if (!require("vroom")) {
-  install.packages("vroom")
-  library(vroom)
-}
-
 if (!require("ggfortify")) {
   install.packages("ggfortify")
   library(ggfortify)
+}
+
+if (!require("vroom")) {
+  install.packages("vroom")
+  library(vroom)
 }
 
 
@@ -46,7 +46,7 @@ autoplot(unsupervised_pca_result,
          color="score") +
   scale_colour_gradient(low="blue", high="red", "Score") +
   ggtitle("2D PCA plot from Unsupervised SnC classifier scores") +
-  theme(plot.title=element_text(hjust = 0.5))
+  theme(plot.title=element_text(hjust=0.5))
 
 # Create PCA plot of supervised results
 supervised_pca_result <- prcomp(t(test[,-1]), scale.=FALSE)
@@ -57,4 +57,4 @@ autoplot(supervised_pca_result,
          color="score") +
   scale_colour_gradient(low="blue", high="red", "Score") +
   ggtitle("2D PCA plot from Supervised SnC classifier scores") +
-  theme(plot.title=element_text(hjust = 0.5))
+  theme(plot.title=element_text(hjust=0.5))
