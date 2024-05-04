@@ -1,15 +1,17 @@
-# CSCI 5461 Project:  Using Machine Learning Approaches on Single-Nuclei Sequencing Data to Identify Senescent Cells
-The data for this project is being generously provided by our collaborators before it has been published. Groups are only able to use it for their CSCI 5461 Spring 2024 project under the following conditions:
-* The datasets themselves and any results derived from them cannot be shared beyond students, TAs, or the instructor of CSCI 5461 without the permission of Prof. David Bernlohr.
-* Groups’ project reports, the associated supplementary data, and project code should be shared with our collaborators at the end of the project.
+# Using unsupervised and supervised learning models to identify senescence in murine cells
 
-Our collaborators may reach out to project groups at the conclusion of the course to learn more about their approach to solving the problem and the results. Students may continue to discuss/explore their results with the collaborators if they choose to but are not required to do so.
-
-Please contact csci5461-help@umn.edu  if you have any questions regarding this project.
+Using both unsupervised and supervised learning methods, clusters of putative senescent cells can be identified out of a group of cells from a single tissue in mice. The SenNet Consortium seeks to develop methods to identify senescent cells in mouse and human tissues. The buildup of senescent cells in tissues can lead to cancer and aging diseases. We used K-Means and K-Nearest Neighbors to identify senescent cells, and ended up identifying 395 cells with more than a 95% likelihood of being senescent.
 
 ---
 
-### Data description:
+## How to run
+
+* You can run both classifiers on the data by running the `runClassifiers.R` script.
+* You can also run the classifiers individually by:
+  * Running `phase1.R` for the unsupervised classifier. The classifier function, `unsupervised_snc_classifier`, will require normalized single nuclei sequencing data to be scored for senescence, the *Wechter, Noah et al.* csv file and *SenMayo* csv file for scoring criteria, and the names of the cells in the sequencing data. It can also be optionally passed a *k* value for the K-Means algorithm and name for the output file for the results.
+  * Running `phase2.R` for the supervised classifier. The classifier function, `supervised_snc_classifier`, will require training data, test data, and training labels in order to run. It can also be optionally passed a *k* value for the KNN algorithm and name for the output file for the results.
+
+## Data description
 
 **1. Integrated_scaled_counts_release.txt**
 * The integrated and scaled data from the single nuclei sequencing results, processed by using Seurat (R toolkit).
@@ -38,15 +40,9 @@ Please contact csci5461-help@umn.edu  if you have any questions regarding this p
 
 **5. Phase2_masked_holdout_10k_integrated_scaled_counts.txt**
 * The held-out cell population for Phase 2 only. 
-* This is a matrix of expression profiles for held-out cells in the same format as Integrated_scaled_counts_release.txt. Your pipeline should take it as the input, and the output file should contain a single, real-valued score per cell in the held-out population. Output should be comma-delimited and in the same order as the input data columns. 
+* This is a matrix of expression profiles for held-out cells in the same format as Integrated_scaled_counts_release.txt. Your pipeline should take it as the input, and the output file should contain a single, real-valued score per cell in the held-out population. Output should be comma-delimited and in the same order as the input data columns.
 
-Feel free to email us at csci5461-help@umn.edu if you have any questions about the data files or how to get started on your project.
-
----
-
-### Project deliverables and expected formats:
-Project poster and video (due May 3, 2024)  
-Project report (due May 3, 2024)
+## Workflow
 
 ### Phase 1:
 * a SnC cluster scoring module:  this module should take in a matrix of single-nuclei data in the same format as integrated_scaled_counts.txt and a comma-delimited list of cell_IDs. This module should output a single, real-valued score which reflects the likelihood that the input list of cell_IDs reflects a true SnC cluster (high scores→ high confidence). Your putative SnC cluster(s) should be identified using this same scoring criteria.
